@@ -1,0 +1,30 @@
+{
+  "name": "collab-app",
+  "version": "1.0.0",
+  "description": "A modern, real-time collaborative task management application",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && npm run dev",
+    "client": "cd client && npm start",
+    "install-server": "cd server && npm install",
+    "install-client": "cd client && npm install",
+    "install-all": "npm run install-server && npm run install-client",
+    "build": "cd client && npm run build",
+    "start": "cd server && npm start"
+  },
+  "keywords": [
+    "collaboration",
+    "task-management",
+    "real-time",
+    "react",
+    "nodejs",
+    "mongodb",
+    "socket.io"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
