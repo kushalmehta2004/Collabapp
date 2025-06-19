@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Toaster } from 'react-hot-toast';
 import { checkAuth } from './store/slices/authSlice';
 import { initializeSocket } from './store/slices/socketSlice';
+import { ThemeProvider } from './context/ThemeContext';
 
 // Components
 import Navbar from './components/Navbar';
@@ -41,74 +42,76 @@ function App() {
   }
 
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-50">
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            duration: 4000,
-            style: {
-              background: '#363636',
-              color: '#fff',
-            },
-            success: {
-              duration: 3000,
-              theme: {
-                primary: '#4aed88',
+    <ThemeProvider>
+      <Router>
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 dark:text-white transition-colors duration-200">
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 4000,
+              style: {
+                background: '#363636',
+                color: '#fff',
               },
-            },
-          }}
-        />
-        {user && <Navbar />}
-        
-        <Routes>
-          {/* Public Routes */}
-          <Route 
-            path="/login" 
-            element={!user ? <Login /> : <Navigate to="/dashboard" />} 
+              success: {
+                duration: 3000,
+                theme: {
+                  primary: '#4aed88',
+                },
+              },
+            }}
           />
-          <Route 
-            path="/register" 
-            element={!user ? <Register /> : <Navigate to="/dashboard" />} 
-          />
+          {user && <Navbar />}
           
-          {/* Protected Routes */}
-          <Route 
-            path="/dashboard" 
-            element={user ? <Dashboard /> : <Navigate to="/login" />} 
-          />
-          <Route 
-            path="/board/:id" 
-            element={user ? <Board /> : <Navigate to="/login" />} 
-          />
-          
-          {/* Default Route */}
-          <Route 
-            path="/" 
-            element={<Navigate to={user ? "/dashboard" : "/login"} />} 
-          />
-          
-          {/* 404 Route */}
-          <Route 
-            path="*" 
-            element={
-              <div className="min-h-screen flex items-center justify-center">
-                <div className="text-center">
-                  <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
-                  <p className="text-gray-600 mb-8">Page not found</p>
-                  <button 
-                    onClick={() => window.history.back()}
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg"
-                  >
-                    Go Back
-                  </button>
+          <Routes>
+            {/* Public Routes */}
+            <Route 
+              path="/login" 
+              element={!user ? <Login /> : <Navigate to="/dashboard" />} 
+            />
+            <Route 
+              path="/register" 
+              element={!user ? <Register /> : <Navigate to="/dashboard" />} 
+            />
+            
+            {/* Protected Routes */}
+            <Route 
+              path="/dashboard" 
+              element={user ? <Dashboard /> : <Navigate to="/login" />} 
+            />
+            <Route 
+              path="/board/:id" 
+              element={user ? <Board /> : <Navigate to="/login" />} 
+            />
+            
+            {/* Default Route */}
+            <Route 
+              path="/" 
+              element={<Navigate to={user ? "/dashboard" : "/login"} />} 
+            />
+            
+            {/* 404 Route */}
+            <Route 
+              path="*" 
+              element={
+                <div className="min-h-screen flex items-center justify-center">
+                  <div className="text-center">
+                    <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">404</h1>
+                    <p className="text-gray-600 dark:text-gray-300 mb-8">Page not found</p>
+                    <button 
+                      onClick={() => window.history.back()}
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg"
+                    >
+                      Go Back
+                    </button>
+                  </div>
                 </div>
-              </div>
-            } 
-          />
-        </Routes>
-      </div>
-    </Router>
+              } 
+            />
+          </Routes>
+        </div>
+      </Router>
+    </ThemeProvider>
   );
 }
 

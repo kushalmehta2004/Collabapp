@@ -65,11 +65,11 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <div className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
             {activeTab === 'boards' && (
               <button
                 onClick={() => setShowCreateForm(true)}
@@ -81,14 +81,14 @@ const Dashboard = () => {
           </div>
 
           {/* Tab Navigation */}
-          <div className="border-b border-gray-200 mb-8">
+          <div className="border-b border-gray-200 dark:border-gray-700 mb-8">
             <nav className="-mb-px flex space-x-8">
               <button
                 onClick={() => setActiveTab('boards')}
                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'boards'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
                 }`}
               >
                 My Boards
@@ -97,8 +97,8 @@ const Dashboard = () => {
                 onClick={() => setActiveTab('invitations')}
                 className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center space-x-1 ${
                   activeTab === 'invitations'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                    : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
                 }`}
               >
                 <span>Invitations</span>
@@ -115,7 +115,7 @@ const Dashboard = () => {
           {activeTab === 'boards' && (
             <>
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded mb-6">
                   {error}
                 </div>
               )}
@@ -124,19 +124,19 @@ const Dashboard = () => {
 
           {/* Create Board Modal */}
           {showCreateForm && (
-            <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-              <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div className="fixed inset-0 bg-gray-600 dark:bg-gray-900 bg-opacity-50 dark:bg-opacity-70 overflow-y-auto h-full w-full z-50">
+              <div className="relative top-20 mx-auto p-5 border dark:border-gray-700 w-96 shadow-lg rounded-md bg-white dark:bg-gray-800">
                 <div className="mt-3">
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">Create New Board</h3>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">Create New Board</h3>
                   <form onSubmit={handleCreateBoard}>
                     <div className="mb-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Board Title *
                       </label>
                       <input
                         type="text"
                         required
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         value={newBoard.title}
                         onChange={(e) => setNewBoard({ ...newBoard, title: e.target.value })}
                         placeholder="Enter board title"
@@ -144,11 +144,11 @@ const Dashboard = () => {
                     </div>
                     
                     <div className="mb-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Description
                       </label>
                       <textarea
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         rows="3"
                         value={newBoard.description}
                         onChange={(e) => setNewBoard({ ...newBoard, description: e.target.value })}

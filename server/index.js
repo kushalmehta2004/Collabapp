@@ -78,6 +78,16 @@ io.on('connection', (socket) => {
   socket.on('board-updated', (data) => {
     socket.to(data.boardId).emit('board-updated', data);
   });
+  
+  // Handle cursor movement
+  socket.on('cursor-move', (data) => {
+    socket.to(data.boardId).emit('cursor-move', data);
+  });
+
+  // Handle user presence
+  socket.on('user-active', (data) => {
+    socket.to(data.boardId).emit('user-active', data);
+  });
 
   // Handle disconnection
   socket.on('disconnect', () => {

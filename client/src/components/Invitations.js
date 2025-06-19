@@ -142,9 +142,9 @@ const Invitations = ({ onInvitationCountChange }) => {
               <p className="text-gray-600 mb-2">
                 Invited by{' '}
                 <span className="font-medium">
-                  {invitation.invitedBy?.firstName && invitation.invitedBy?.lastName
-                    ? `${invitation.invitedBy.firstName} ${invitation.invitedBy.lastName}`
-                    : invitation.invitedBy?.username || 'Unknown User'}
+                  {invitation.inviter?.firstName && invitation.inviter?.lastName
+                    ? `${invitation.inviter.firstName} ${invitation.inviter.lastName}`
+                    : invitation.inviter?.username || 'Unknown User'}
                 </span>
               </p>
               

@@ -11,6 +11,8 @@ import AddTaskForm from './board/AddTaskForm';
 import TaskDetailModal from './task/TaskDetailModal';
 import ArchivedLists from './board/ArchivedLists';
 import MemberManagement from './board/MemberManagement';
+import CursorTracker from './board/CursorTracker';
+import ActivityFeed from './board/ActivityFeed';
 import listService from '../services/listService';
 import taskService from '../services/taskService';
 import boardService from '../services/boardService';
@@ -22,6 +24,7 @@ const Board = () => {
   const dispatch = useDispatch();
   const { currentBoard, isLoading, error } = useSelector((state) => state.boards);
   const { user } = useSelector((state) => state.auth);
+  const { socket } = useSelector((state) => state.socket);
   const [showAddList, setShowAddList] = useState(false);
   const [showAddTask, setShowAddTask] = useState({});
   const [boardData, setBoardData] = useState(null);
@@ -32,6 +35,96 @@ const Board = () => {
   const [inviteUsername, setInviteUsername] = useState('');
   const [inviteRole, setInviteRole] = useState('member');
   const [showMemberManagement, setShowMemberManagement] = useState(false);
+  const [activeUsers, setActiveUsers] = useState([]);
+  const [showCollaborators, setShowCollaborators] = useState(true);
+
+  // Connect to socket room for this board
+  useEffect(() => {
+    if (socket && id) {
+      // Join the board room
+      socket.emit('join-board', id);
+      
+      // Emit user active event
+      socket.emit('user-active', {
+        boardId: id,
+        userId: user._id,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName
+      });
+      
+      // Listen for active users
+      socket.on('user-active', (userData) => {
+        if (userData.userId !== user._id) {
+          setActiveUsers(prev => {
+            // Check if user already exists in the list
+            const exists = prev.some(u => u.userId === userData.userId);
+            if (!exists) {
+              return [...prev, {
+                ...userData,
+                timestamp: Date.now()
+              }];
+            }
+            return prev.map(u => 
+              u.userId === userData.userId 
+                ? { ...u, timestamp: Date.now() } 
+                : u
+            );
+          });
+        }
+      });
+      
+      // Clean up on unmount
+      return () => {
+        socket.emit('leave-board', id);
+        socket.off('user-active');
+      };
+    }
+  }, [socket, id, user]);
+
+  // Connect to socket room for this board
+  useEffect(() => {
+    if (socket && id) {
+      // Join the board room
+      socket.emit('join-board', id);
+      
+      // Emit user active event
+      socket.emit('user-active', {
+        boardId: id,
+        userId: user._id,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName
+      });
+      
+      // Listen for active users
+      socket.on('user-active', (userData) => {
+        if (userData.userId !== user._id) {
+          setActiveUsers(prev => {
+            // Check if user already exists in the list
+            const exists = prev.some(u => u.userId === userData.userId);
+            if (!exists) {
+              return [...prev, {
+                ...userData,
+                timestamp: Date.now()
+              }];
+            }
+            return prev.map(u => 
+              u.userId === userData.userId 
+                ? { ...u, timestamp: Date.now() } 
+                : u
+            );
+          });
+        }
+      });
+      
+      // Clean up on unmount
+      return () => {
+        socket.emit('leave-board', id);
+        socket.off('user-active');
+      };
+    }
+  }, [socket, id, user]);
 
   useEffect(() => {
     if (id) {
@@ -342,12 +435,46 @@ const Board = () => {
   };
 
   if (isLoading) {
-    return (
+  return (
+    <div id="board-container">
+      {/* Real-time cursor tracking */}
+      <CursorTracker boardId={id} />;
+
+      {/* Active collaborators display */}
+      {showCollaborators && activeUsers.length > 0 && (
+        <div className="absolute top-4 right-4 bg-white bg-opacity-90 rounded-lg shadow-lg p-2 z-50">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-medium text-gray-700">Active Collaborators</h3>
+            <button
+              onClick={() => setShowCollaborators(false)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <div className="space-y-2">
+            {activeUsers.map(activeUser => (
+              <div key={activeUser.userId} className="flex items-center space-x-2">
+                <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                <span className="text-sm text-gray-600">
+                  {activeUser.firstName && activeUser.lastName
+                    ? `${activeUser.firstName} ${activeUser.lastName}`
+                    : activeUser.username}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="min-h-screen flex items-center justify-center">
         <LoadingSpinner size="large" />
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   if (error) {
     return (
@@ -385,9 +512,42 @@ const Board = () => {
 
   return (
     <div 
-      className="min-h-screen"
+      className="min-h-screen relative"
       style={{ backgroundColor: boardData.backgroundColor }}
+      id="board-container"
     >
+      {/* Real-time cursor tracking */}
+      <CursorTracker boardId={id} />
+      
+      {/* Active collaborators display */}
+      {showCollaborators && activeUsers.length > 0 && (
+        <div className="absolute top-4 right-4 bg-white bg-opacity-90 rounded-lg shadow-lg p-2 z-50">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-sm font-medium text-gray-700">Active Collaborators</h3>
+            <button 
+              onClick={() => setShowCollaborators(false)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <div className="space-y-2">
+            {activeUsers.map(activeUser => (
+              <div key={activeUser.userId} className="flex items-center space-x-2">
+                <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                <span className="text-sm text-gray-700">
+                  {activeUser.firstName && activeUser.lastName 
+                    ? `${activeUser.firstName} ${activeUser.lastName}`
+                    : activeUser.username}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      
       <div className="p-4">
         <div className="mb-6">
           <div className="flex items-center justify-between">
@@ -606,7 +766,10 @@ const Board = () => {
       {showInviteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-            <div className="flex justify-between items-center mb-4">
+            
+      {/* Real-time Activity Feed */}
+      <ActivityFeed boardId={id} />
+      <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-gray-900">Invite Member</h2>
               <button
                 onClick={() => setShowInviteModal(false)}
@@ -678,6 +841,9 @@ const Board = () => {
           onMemberUpdate={refreshBoardData}
         />
       )}
+      
+      {/* Real-time Activity Feed */}
+      <ActivityFeed boardId={id} />
     </div>
   );
 };
