@@ -11,7 +11,7 @@ import AddTaskForm from './board/AddTaskForm';
 import TaskDetailModal from './task/TaskDetailModal';
 import ArchivedLists from './board/ArchivedLists';
 import MemberManagement from './board/MemberManagement';
-import CursorTracker from './board/CursorTracker';
+
 import ActivityFeed from './board/ActivityFeed';
 import listService from '../services/listService';
 import taskService from '../services/taskService';
@@ -437,8 +437,7 @@ const Board = () => {
   if (isLoading) {
   return (
     <div id="board-container">
-      {/* Real-time cursor tracking */}
-      <CursorTracker boardId={id} />;
+
 
       {/* Active collaborators display */}
       {showCollaborators && activeUsers.length > 0 && (
@@ -516,8 +515,7 @@ const Board = () => {
       style={{ backgroundColor: boardData.backgroundColor }}
       id="board-container"
     >
-      {/* Real-time cursor tracking */}
-      <CursorTracker boardId={id} />
+
       
       {/* Active collaborators display */}
       {showCollaborators && activeUsers.length > 0 && (
